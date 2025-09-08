@@ -1,0 +1,1533 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Aurok Energies Solar Calculator</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Arial', sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+            overflow-x: hidden;
+        }
+
+        .container {
+            max-width: 1000px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+            overflow: hidden;
+            position: relative;
+        }
+
+        .header {
+            background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+            color: white;
+            padding: 40px;
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .header::before {
+            content: '⚡';
+            position: absolute;
+            font-size: 150px;
+            opacity: 0.1;
+            top: -20px;
+            right: -20px;
+            animation: pulse 2s infinite;
+        }
+
+        .header h1 {
+            font-size: 2.5em;
+            margin-bottom: 10px;
+            font-weight: 300;
+            position: relative;
+            z-index: 2;
+        }
+
+        .header p {
+            font-size: 1.2em;
+            opacity: 0.9;
+            position: relative;
+            z-index: 2;
+        }
+
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); opacity: 0.1; }
+            50% { transform: scale(1.05); opacity: 0.2; }
+        }
+
+        .calculator-content {
+            padding: 40px;
+        }
+
+        .step-indicator {
+            display: flex;
+            justify-content: center;
+            margin-bottom: 40px;
+        }
+
+        .step {
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            background: #e0e0e0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 15px;
+            color: #666;
+            font-weight: bold;
+            transition: all 0.4s ease;
+            cursor: pointer;
+            position: relative;
+        }
+
+        .step::after {
+            content: '';
+            position: absolute;
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+            opacity: 0;
+            z-index: -1;
+            transition: all 0.4s ease;
+        }
+
+        .step.active {
+            background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+            color: white;
+            transform: scale(1.2);
+        }
+
+        .step.active::after {
+            opacity: 0.3;
+            transform: scale(1.3);
+        }
+
+        .step.completed {
+            background: #4CAF50;
+            color: white;
+        }
+
+        .form-section {
+            margin-bottom: 30px;
+            padding: 25px;
+            border: 2px solid #f0f0f0;
+            border-radius: 15px;
+            background: linear-gradient(145deg, #ffffff 0%, #f8f9ff 100%);
+            transition: all 0.3s ease;
+        }
+
+        .form-section:hover {
+            border-color: #4facfe;
+            transform: translateY(-2px);
+            box-shadow: 0 10px 25px rgba(79, 172, 254, 0.1);
+        }
+
+        .form-group {
+            margin-bottom: 25px;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 12px;
+            font-weight: bold;
+            color: #333;
+            font-size: 1.1em;
+        }
+
+        input, select {
+            width: 100%;
+            padding: 15px;
+            border: 2px solid #e0e0e0;
+            border-radius: 10px;
+            font-size: 16px;
+            transition: all 0.3s ease;
+            background: white;
+        }
+
+        input:focus, select:focus {
+            border-color: #4facfe;
+            outline: none;
+            transform: translateY(-1px);
+            box-shadow: 0 5px 15px rgba(79, 172, 254, 0.2);
+        }
+
+        .appliance-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            gap: 25px;
+            margin-top: 25px;
+        }
+
+        .appliance-card {
+            background: white;
+            border: 2px solid #f0f0f0;
+            border-radius: 15px;
+            padding: 20px;
+            transition: all 0.4s ease;
+            cursor: pointer;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .appliance-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(79, 172, 254, 0.1), transparent);
+            transition: left 0.6s ease;
+        }
+
+        .appliance-card:hover {
+            border-color: #4facfe;
+            transform: translateY(-5px);
+            box-shadow: 0 15px 30px rgba(79, 172, 254, 0.2);
+        }
+
+        .appliance-card:hover::before {
+            left: 100%;
+        }
+
+        .appliance-header {
+            display: flex;
+            align-items: center;
+            margin-bottom: 15px;
+        }
+
+        .appliance-icon {
+            font-size: 2.5em;
+            margin-right: 15px;
+            transition: transform 0.3s ease;
+        }
+
+        .appliance-card:hover .appliance-icon {
+            transform: scale(1.2) rotate(5deg);
+        }
+
+        .appliance-info {
+            flex: 1;
+        }
+
+        .appliance-name {
+            font-weight: bold;
+            margin-bottom: 5px;
+            color: #333;
+            font-size: 1.1em;
+        }
+
+        .appliance-power {
+            font-size: 0.9em;
+            color: #666;
+            background: #f0f8ff;
+            padding: 2px 8px;
+            border-radius: 12px;
+            display: inline-block;
+        }
+
+        .appliance-inputs {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 12px;
+            margin-top: 15px;
+        }
+
+        .input-group {
+            position: relative;
+        }
+
+        .input-group input {
+            padding: 12px;
+            font-size: 14px;
+        }
+
+        .input-group label {
+            font-size: 0.85em;
+            margin-bottom: 5px;
+            color: #555;
+            font-weight: normal;
+        }
+
+        .navigation {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 40px;
+            padding-top: 20px;
+            border-top: 2px solid #f0f0f0;
+        }
+
+        .btn {
+            padding: 15px 35px;
+            border: none;
+            border-radius: 25px;
+            font-size: 16px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .btn::before {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 0;
+            height: 0;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.3);
+            transition: all 0.4s ease;
+            transform: translate(-50%, -50%);
+        }
+
+        .btn:hover::before {
+            width: 300px;
+            height: 300px;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+            color: white;
+            box-shadow: 0 5px 15px rgba(79, 172, 254, 0.3);
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 10px 25px rgba(79, 172, 254, 0.4);
+        }
+
+        .btn-secondary {
+            background: linear-gradient(135deg, #ffecd2 0%, #fcb69f 100%);
+            color: #333;
+            box-shadow: 0 5px 15px rgba(252, 182, 159, 0.3);
+        }
+
+        .btn-secondary:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 10px 25px rgba(252, 182, 159, 0.4);
+        }
+
+        .results {
+            background: linear-gradient(135deg, #56ab2f 0%, #a8e6cf 100%);
+            color: white;
+            padding: 30px;
+            border-radius: 15px;
+            margin-top: 30px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .results::before {
+            content: '💡';
+            position: absolute;
+            font-size: 100px;
+            opacity: 0.1;
+            top: -10px;
+            right: -10px;
+        }
+
+        .results h3 {
+            margin-bottom: 20px;
+            font-size: 1.5em;
+        }
+
+        .result-item {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 12px;
+            padding: 10px 0;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.3);
+            animation: fadeInUp 0.5s ease forwards;
+        }
+
+        .result-item:last-child {
+            border-bottom: none;
+        }
+
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .hidden {
+            display: none;
+        }
+
+        .tariff-notice {
+            background: linear-gradient(135deg, #fff3cd 0%, #ffeaa7 100%);
+            border: 2px solid #ffd93d;
+            color: #856404;
+            padding: 20px;
+            border-radius: 12px;
+            margin-bottom: 25px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .tariff-notice::before {
+            content: '⚠️';
+            position: absolute;
+            font-size: 60px;
+            opacity: 0.2;
+            top: -5px;
+            right: 10px;
+        }
+
+        .step-title {
+            text-align: center;
+            margin-bottom: 30px;
+            font-size: 2em;
+            color: #333;
+            position: relative;
+        }
+
+        .step-title::after {
+            content: '';
+            position: absolute;
+            bottom: -10px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 100px;
+            height: 3px;
+            background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+            border-radius: 2px;
+        }
+
+        .usage-indicator {
+            position: absolute;
+            top: 10px;
+            right: 15px;
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            background: #ddd;
+            transition: all 0.3s ease;
+        }
+
+        .appliance-card.has-usage .usage-indicator {
+            background: #4CAF50;
+            animation: pulse-green 2s infinite;
+        }
+
+        @keyframes pulse-green {
+            0%, 100% { transform: scale(1); opacity: 1; }
+            50% { transform: scale(1.3); opacity: 0.7; }
+        }
+
+        .floating-particles {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            overflow: hidden;
+            top: 0;
+            left: 0;
+            pointer-events: none;
+        }
+
+        .particle {
+            position: absolute;
+            width: 4px;
+            height: 4px;
+            background: rgba(79, 172, 254, 0.3);
+            border-radius: 50%;
+            animation: float 6s infinite linear;
+        }
+
+        @keyframes float {
+            0% { transform: translateY(100vh) rotate(0deg); opacity: 0; }
+            10% { opacity: 1; }
+            90% { opacity: 1; }
+            100% { transform: translateY(-100px) rotate(360deg); opacity: 0; }
+        }
+
+        /* New styles for the solar recommendation section (Step 5) */
+        .card {
+            background: white;
+            border-radius: 15px;
+            padding: 30px;
+            margin-bottom: 25px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+            border: 2px solid #f0f0f0;
+            transition: all 0.3s ease;
+        }
+
+        .card:hover {
+            border-color: #4facfe;
+            transform: translateY(-2px);
+            box-shadow: 0 15px 35px rgba(79, 172, 254, 0.15);
+        }
+
+        .card-title {
+            text-align: center;
+            margin-bottom: 25px;
+            font-size: 1.8em;
+            color: #333;
+            position: relative;
+        }
+
+        .card-title::after {
+            content: '';
+            position: absolute;
+            bottom: -10px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 80px;
+            height: 3px;
+            background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+            border-radius: 2px;
+        }
+
+        .results-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+
+        .result-box {
+            background: linear-gradient(145deg, #f8f9ff 0%, #ffffff 100%);
+            padding: 20px;
+            border-radius: 12px;
+            text-align: center;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
+            border: 1px solid #e8e8e8;
+        }
+
+        .result-label {
+            font-size: 0.9em;
+            color: #666;
+            margin-bottom: 10px;
+        }
+
+        .result-value {
+            font-size: 1.8em;
+            font-weight: bold;
+            color: #4facfe;
+            margin-bottom: 8px;
+        }
+
+        .result-desc {
+            font-size: 0.85em;
+            color: #888;
+        }
+
+        .chart-container {
+            background: #f8f9ff;
+            padding: 20px;
+            border-radius: 12px;
+            margin-top: 25px;
+            height: 300px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border: 1px solid #e8e8e8;
+        }
+
+        .scenario-toggles {
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+            margin-bottom: 30px;
+        }
+
+        .scenario-toggle {
+            padding: 12px 20px;
+            background: #f0f0f0;
+            border-radius: 25px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-weight: 500;
+        }
+
+        .scenario-toggle.active {
+            background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+            color: white;
+            box-shadow: 0 5px 15px rgba(79, 172, 254, 0.3);
+        }
+
+        .comparison-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+
+        .comparison-card {
+            background: linear-gradient(145deg, #f8f9ff 0%, #ffffff 100%);
+            padding: 20px;
+            border-radius: 12px;
+            text-align: center;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
+            border: 1px solid #e8e8e8;
+        }
+
+        .comparison-card h3 {
+            margin-bottom: 15px;
+            color: #333;
+        }
+
+        .comparison-value {
+            font-size: 1.5em;
+            font-weight: bold;
+            color: #4facfe;
+            margin-bottom: 8px;
+        }
+
+        .comparison-desc {
+            font-size: 0.85em;
+            color: #888;
+        }
+
+        .cta-buttons {
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+            margin-bottom: 30px;
+            flex-wrap: wrap;
+        }
+
+        .btn-outline {
+            padding: 15px 25px;
+            background: transparent;
+            border: 2px solid #4facfe;
+            color: #4facfe;
+            border-radius: 25px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .btn-outline:hover {
+            background: #4facfe;
+            color: white;
+            transform: translateY(-2px);
+        }
+
+        .whatsapp-btn {
+            padding: 15px 25px;
+            background: #25D366;
+            color: white;
+            border: none;
+            border-radius: 25px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .whatsapp-btn:hover {
+            background: #128C7E;
+            transform: translateY(-2px);
+        }
+
+        footer {
+            text-align: center;
+            margin-top: 40px;
+            color: rgba(255, 255, 255, 0.8);
+            font-size: 0.9em;
+        }
+        .chart-container {
+            background: #f8f9ff;
+            padding: 20px;
+            border-radius: 12px;
+            margin-top: 25px;
+            height: 300px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border: 1px solid #e8e8e8;
+            opacity: 0;
+            transform: translateY(20px);
+            transition: opacity 0.6s ease, transform 0.6s ease;
+        }
+        .chart-container.visible { opacity: 1; transform: translateY(0); }
+        .progress-bar { height: 6px; background: #e0e0e0; border-radius: 3px; margin: 20px 0; overflow: hidden; }
+        .progress-fill { height: 100%; width: 0; background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%); transition: width 0.5s ease; }
+        /* Tooltip styling */
+        .tooltip {
+            position: relative;
+            display: inline-block;
+            cursor: help;
+            margin-left: 6px;
+            color: #4facfe;
+            font-weight: bold;
+        }
+        .tooltip .tooltiptext {
+            visibility: hidden;
+            width: 200px;
+            background-color: #333;
+            color: #fff;
+            text-align: center;
+            border-radius: 6px;
+            padding: 8px;
+            position: absolute;
+            z-index: 1;
+            bottom: 125%;
+            left: 50%;
+            margin-left: -100px;
+            opacity: 0;
+            transition: opacity 0.3s;
+        }
+        .tooltip:hover .tooltiptext {
+            visibility: visible;
+            opacity: 1;
+        }
+    </style>
+</head>
+<body>
+    <div class="floating-particles" id="particles"></div>
+    
+    <div class="container">
+        <div class="header">
+            <h1>Aurok Energies Solar Calculator</h1>
+            <p>Smart solar recommendations & savings — tailored to your household</p>
+        </div>
+
+        <div class="calculator-content">
+            <div class="step-indicator">
+                <div class="step active" id="step1">1</div>
+                <div class="step" id="step2">2</div>
+                <div class="step" id="step3">3</div>
+                <div class="step" id="step4">4</div>
+                <div class="step" id="step5">5</div>
+            </div>
+
+            <div class="tariff-notice">
+                <strong>Please note:</strong> This calculator uses an average tariff of R2.91 VAT inclusive to estimate your electricity usage and costs.
+            </div>
+
+            <!-- Step 1: Basic Information -->
+            <div class="step-content" id="step1-content">
+                <h2 class="step-title">🏠 Basic Information</h2>
+                
+                <div class="form-section">
+                    <div class="form-group">
+                        <label for="houseSize">🏘️ How big is your house (m²)?</label>
+                        <input type="number" id="houseSize" placeholder="Enter house size in square meters" min="50" max="1000">
+                    </div>
+
+                    <div class="form-group">
+                        <label for="knowTariff">💰 Do you know your tariff in R/kWh inclusive of VAT?</label>
+                        <select id="knowTariff" onchange="toggleTariffInput()">
+                            <option value="no">No, use default tariff (R2.91/kWh)</option>
+                            <option value="yes">Yes, I know my tariff</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group hidden" id="customTariff">
+                        <label for="tariffRate">⚡ Your tariff rate (R/kWh):</label>
+                        <input type="number" id="tariffRate" placeholder="Enter your tariff rate" min="1" max="10" step="0.01">
+                    </div>
+
+                    <div class="form-group">
+                        <label for="occupants">👥 Number of people in household:</label>
+                        <input type="number" id="occupants" placeholder="Number of occupants" min="1" max="20">
+                    </div>
+                </div>
+            </div>
+
+            <!-- Step 2: Lighting -->
+            <div class="step-content hidden" id="step2-content">
+                <h2 class="step-title">💡 Lighting Solutions</h2>
+                
+                <div class="form-section">
+                    <div class="appliance-grid">
+                        <div class="appliance-card" data-appliance="led">
+                            <div class="usage-indicator"></div>
+                            <div class="appliance-header">
+                                <div class="appliance-icon">💡</div>
+                                <div class="appliance-info">
+                                    <div class="appliance-name">LED Lights</div>
+                                    <div class="appliance-power">9W each</div>
+                                </div>
+                            </div>
+                            <div class="appliance-inputs">
+                                <div class="input-group">
+                                    <label>Count</label>
+                                    <input type="number" id="led-count" placeholder="0" min="0" max="100" onchange="updateUsageIndicator('led')">
+                                </div>
+                                <div class="input-group">
+                                    <label>Hours/day</label>
+                                    <input type="number" id="led-hours" placeholder="0" min="0" max="24" onchange="updateUsageIndicator('led')">
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="appliance-card" data-appliance="cfl">
+                            <div class="usage-indicator"></div>
+                            <div class="appliance-header">
+                                <div class="appliance-icon">🔆</div>
+                                <div class="appliance-info">
+                                    <div class="appliance-name">CFL Lights</div>
+                                    <div class="appliance-power">20W each</div>
+                                </div>
+                            </div>
+                            <div class="appliance-inputs">
+                                <div class="input-group">
+                                    <label>Count</label>
+                                    <input type="number" id="cfl-count" placeholder="0" min="0" max="100" onchange="updateUsageIndicator('cfl')">
+                                </div>
+                                <div class="input-group">
+                                    <label>Hours/day</label>
+                                    <input type="number" id="cfl-hours" placeholder="0" min="0" max="24" onchange="updateUsageIndicator('cfl')">
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="appliance-card" data-appliance="incandescent">
+                            <div class="usage-indicator"></div>
+                            <div class="appliance-header">
+                                <div class="appliance-icon">🌟</div>
+                                <div class="appliance-info">
+                                    <div class="appliance-name">Incandescent Bulbs</div>
+                                    <div class="appliance-power">60W each</div>
+                                </div>
+                            </div>
+                            <div class="appliance-inputs">
+                                <div class="input-group">
+                                    <label>Count</label>
+                                    <input type="number" id="incandescent-count" placeholder="0" min="0" max="100" onchange="updateUsageIndicator('incandescent')">
+                                </div>
+                                <div class="input-group">
+                                    <label>Hours/day</label>
+                                    <input type="number" id="incandescent-hours" placeholder="0" min="0" max="24" onchange="updateUsageIndicator('incandescent')">
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="appliance-card" data-appliance="outdoor">
+                            <div class="usage-indicator"></div>
+                            <div class="appliance-header">
+                                <div class="appliance-icon">🔦</div>
+                                <div class="appliance-info">
+                                    <div class="appliance-name">Outdoor/Security Lights</div>
+                                    <div class="appliance-power">50W each</div>
+                                </div>
+                            </div>
+                            <div class="appliance-inputs">
+                                <div class="input-group">
+                                    <label>Count</label>
+                                    <input type="number" id="outdoor-count" placeholder="0" min="0" max="50" onchange="updateUsageIndicator('outdoor')">
+                                </div>
+                                <div class="input-group">
+                                    <label>Hours/day</label>
+                                    <input type="number" id="outdoor-hours" placeholder="0" min="0" max="24" onchange="updateUsageIndicator('outdoor')">
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Step 3: Kitchen Appliances -->
+            <div class="step-content hidden" id="step3-content">
+                <h2 class="step-title">🍳 Kitchen & Major Appliances</h2>
+                
+                <div class="form-section">
+                    <div class="appliance-grid">
+                        <div class="appliance-card" data-appliance="fridge">
+                            <div class="usage-indicator"></div>
+                            <div class="appliance-header">
+                                <div class="appliance-icon">❄️</div>
+                                <div class="appliance-info">
+                                    <div class="appliance-name">Refrigerator/Freezer</div>
+                                    <div class="appliance-power">150W each</div>
+                                </div>
+                            </div>
+                            <div class="appliance-inputs">
+                                <div class="input-group">
+                                    <label>Count</label>
+                                    <input type="number" id="fridge-count" placeholder="0" min="0" max="10" onchange="updateUsageIndicator('fridge')">
+                                </div>
+                                <div class="input-group">
+                                    <label>Hours/day</label>
+                                    <input type="number" id="fridge-hours" placeholder="24" min="0" max="24" value="24" onchange="updateUsageIndicator('fridge')">
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="appliance-card" data-appliance="stove">
+                            <div class="usage-indicator"></div>
+                            <div class="appliance-header">
+                                <div class="appliance-icon">🔥</div>
+                                <div class="appliance-info">
+                                    <div class="appliance-name">Electric Stove</div>
+                                    <div class="appliance-power">2500W each</div>
+                                </div>
+                            </div>
+                            <div class="appliance-inputs">
+                                <div class="input-group">
+                                    <label>Count</label>
+                                    <input type="number" id="stove-count" placeholder="0" min="0" max="5" onchange="updateUsageIndicator('stove')">
+                                </div>
+                                <div class="input-group">
+                                    <label>Hours/day</label>
+                                    <input type="number" id="stove-hours" placeholder="0" min="0" max="24" onchange="updateUsageIndicator('stove')">
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="appliance-card" data-appliance="microwave">
+                            <div class="usage-indicator"></div>
+                            <div class="appliance-header">
+                                <div class="appliance-icon">📱</div>
+                                <div class="appliance-info">
+                                    <div class="appliance-name">Microwave</div>
+                                    <div class="appliance-power">1000W each</div>
+                                </div>
+                            </div>
+                            <div class="appliance-inputs">
+                                <div class="input-group">
+                                    <label>Count</label>
+                                    <input type="number" id="microwave-count" placeholder="0" min="0" max="5" onchange="updateUsageIndicator('microwave')">
+                                </div>
+                                <div class="input-group">
+                                    <label>Hours/day</label>
+                                    <input type="number" id="microwave-hours" placeholder="0" min="0" max="24" onchange="updateUsageIndicator('microwave')">
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="appliance-card" data-appliance="dishwasher">
+                            <div class="usage-indicator"></div>
+                            <div class="appliance-header">
+                                <div class="appliance-icon">🍽️</div>
+                                <div class="appliance-info">
+                                    <div class="appliance-name">Dishwasher</div>
+                                    <div class="appliance-power">1800W each</div>
+                                </div>
+                            </div>
+                            <div class="appliance-inputs">
+                                <div class="input-group">
+                                    <label>Count</label>
+                                    <input type="number" id="dishwasher-count" placeholder="0" min="0" max="5" onchange="updateUsageIndicator('dishwasher')">
+                                </div>
+                                <div class="input-group">
+                                    <label>Hours/day</label>
+                                    <input type="number" id="dishwasher-hours" placeholder="0" min="0" max="24" onchange="updateUsageIndicator('dishwasher')">
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="appliance-card" data-appliance="washer">
+                            <div class="usage-indicator"></div>
+                            <div class="appliance-header">
+                                <div class="appliance-icon">👕</div>
+                                <div class="appliance-info">
+                                    <div class="appliance-name">Washing Machine</div>
+                                    <div class="appliance-power">2000W each</div>
+                                </div>
+                            </div>
+                            <div class="appliance-inputs">
+                                <div class="input-group">
+                                    <label>Count</label>
+                                    <input type="number" id="washer-count" placeholder="0" min="0" max="5" onchange="updateUsageIndicator('washer')">
+                                </div>
+                                <div class="input-group">
+                                    <label>Hours/day</label>
+                                    <input type="number" id="washer-hours" placeholder="0" min="0" max="24" onchange="updateUsageIndicator('washer')">
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="appliance-card" data-appliance="dryer">
+                            <div class="usage-indicator"></div>
+                            <div class="appliance-header">
+                                <div class="appliance-icon">🌪️</div>
+                                <div class="appliance-info">
+                                    <div class="appliance-name">Tumble Dryer</div>
+                                    <div class="appliance-power">3000W each</div>
+                                </div>
+                            </div>
+                            <div class="appliance-inputs">
+                                <div class="input-group">
+                                    <label>Count</label>
+                                    <input type="number" id="dryer-count" placeholder="0" min="0" max="5" onchange="updateUsageIndicator('dryer')">
+                                </div>
+                                <div class="input-group">
+                                    <label>Hours/day</label>
+                                    <input type="number" id="dryer-hours" placeholder="0" min="0" max="24" onchange="updateUsageIndicator('dryer')">
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Step 4: Entertainment & Other -->
+            <div class="step-content hidden" id="step4-content">
+                <h2 class="step-title">📺 Entertainment & Other Appliances</h2>
+                
+                <div class="form-section">
+                    <div class="appliance-grid">
+                        <div class="appliance-card" data-appliance="tv">
+                            <div class="usage-indicator"></div>
+                            <div class="appliance-header">
+                                <div class="appliance-icon">📺</div>
+                                <div class="appliance-info">
+                                    <div class="appliance-name">Television</div>
+                                    <div class="appliance-power">100W each</div>
+                                </div>
+                            </div>
+                            <div class="appliance-inputs">
+                                <div class="input-group">
+                                    <label>Count</label>
+                                    <input type="number" id="tv-count" placeholder="0" min="0" max="20" onchange="updateUsageIndicator('tv')">
+                                </div>
+                                <div class="input-group">
+                                    <label>Hours/day</label>
+                                    <input type="number" id="tv-hours" placeholder="0" min="0" max="24" onchange="updateUsageIndicator('tv')">
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="appliance-card" data-appliance="computer">
+                            <div class="usage-indicator"></div>
+                            <div class="appliance-header">
+                                <div class="appliance-icon">💻</div>
+                                <div class="appliance-info">
+                                    <div class="appliance-name">Computer/Laptop</div>
+                                    <div class="appliance-power">300W each</div>
+                                </div>
+                            </div>
+                            <div class="appliance-inputs">
+                                <div class="input-group">
+                                    <label>Count</label>
+                                    <input type="number" id="computer-count" placeholder="0" min="0" max="20" onchange="updateUsageIndicator('computer')">
+                                </div>
+                                <div class="input-group">
+                                    <label>Hours/day</label>
+                                    <input type="number" id="computer-hours" placeholder="0" min="0" max="24" onchange="updateUsageIndicator('computer')">
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="appliance-card" data-appliance="ac">
+                            <div class="usage-indicator"></div>
+                            <div class="appliance-header">
+                                <div class="appliance-icon">🌬️</div>
+                                <div class="appliance-info">
+                                    <div class="appliance-name">Air Conditioner</div>
+                                    <div class="appliance-power">1500W each</div>
+                                </div>
+                            </div>
+                            <div class="appliance-inputs">
+                                <div class="input-group">
+                                    <label>Count</label>
+                                    <input type="number" id="ac-count" placeholder="0" min="0" max="10" onchange="updateUsageIndicator('ac')">
+                                </div>
+                                <div class="input-group">
+                                    <label>Hours/day</label>
+                                    <input type="number" id="ac-hours" placeholder="0" min="0" max="24" onchange="updateUsageIndicator('ac')">
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="appliance-card" data-appliance="heater">
+                            <div class="usage-indicator"></div>
+                            <div class="appliance-header">
+                                <div class="appliance-icon">🔥</div>
+                                <div class="appliance-info">
+                                    <div class="appliance-name">Space Heater</div>
+                                    <div class="appliance-power">2000W each</div>
+                                </div>
+                            </div>
+                            <div class="appliance-inputs">
+                                <div class="input-group">
+                                    <label>Count</label>
+                                    <input type="number" id="heater-count" placeholder="0" min="0" max="10" onchange="updateUsageIndicator('heater')">
+                                </div>
+                                <div class="input-group">
+                                    <label>Hours/day</label>
+                                    <input type="number" id="heater-hours" placeholder="0" min="0" max="24" onchange="updateUsageIndicator('heater')">
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="appliance-card" data-appliance="pool">
+                            <div class="usage-indicator"></div>
+                            <div class="appliance-header">
+                                <div class="appliance-icon">🏊</div>
+                                <div class="appliance-info">
+                                    <div class="appliance-name">Pool Pump</div>
+                                    <div class="appliance-power">1500W each</div>
+                                </div>
+                            </div>
+                            <div class="appliance-inputs">
+                                <div class="input-group">
+                                    <label>Count</label>
+                                    <input type="number" id="pool-count" placeholder="0" min="0" max="5" onchange="updateUsageIndicator('pool')">
+                                </div>
+                                <div class="input-group">
+                                    <label>Hours/day</label>
+                                    <input type="number" id="pool-hours" placeholder="0" min="0" max="24" onchange="updateUsageIndicator('pool')">
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="appliance-card" data-appliance="geyser">
+                            <div class="usage-indicator"></div>
+                            <div class="appliance-header">
+                                <div class="appliance-icon">🚿</div>
+                                <div class="appliance-info">
+                                    <div class="appliance-name">Geyser</div>
+                                    <div class="appliance-power">3000W each</div>
+                                </div>
+                            </div>
+                            <div class="appliance-inputs">
+                                <div class="input-group">
+                                    <label>Count</label>
+                                    <input type="number" id="geyser-count" placeholder="0" min="0" max="5" onchange="updateUsageIndicator('geyser')">
+                                </div>
+                                <div class="input-group">
+                                    <label>Hours/day</label>
+                                    <input type="number" id="geyser-hours" placeholder="0" min="0" max="24" onchange="updateUsageIndicator('geyser')">
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Step 5: Results & Solar Recommendations -->
+            <div class="step-content hidden" id="step5-content">
+                <h2 class="step-title">☀️ Solar Recommendations</h2>
+                
+                <div class="card" id="results-section">
+                    <h2 class="card-title">⚡ Recommended Solar System</h2>
+                    
+                    <div class="results-grid">
+                        <div class="result-box">
+                            <div class="result-label">System Size</div>
+                            <div class="result-value" id="system-size">5 kW</div>
+                            <div class="result-desc">Ideal for your energy needs</div>
+                        </div>
+                        
+                        <div class="result-box">
+                            <div class="result-label">Solar Panels</div>
+                            <div class="result-value" id="panels-count">14</div>
+                            <div class="result-desc">330W panels</div>
+                        </div>
+                        
+                        <div class="result-box">
+                            <div class="result-label">Inverter Size</div>
+                            <div class="result-value" id="inverter-size">5 kW</div>
+                            <div class="result-desc">Hybrid inverter</div>
+                        </div>
+                        
+                        <div class="result-box">
+                            <div class="result-label">Battery Capacity</div>
+                            <div class="result-value" id="battery-size">10 kWh</div>
+                            <div class="result-desc">8 hours backup</div>
+                        </div>
+                    </div>
+                    
+                    <div class="result-box" style="max-width: 400px; margin: 0 auto;">
+                        <div class="result-label">Estimated Installation Cost</div>
+                        <div class="result-value" id="installation-cost">R95,000</div>
+                        <div class="result-desc">Including panels, inverter, battery & installation</div>
+                    </div>
+                </div>
+                
+                <div class="card" id="savings-section">
+                    <h2 class="card-title">💰 Savings & Payback Period</h2>
+                    
+                    <div class="results-grid">
+                        <div class="result-box">
+                            <div class="result-label">Monthly Savings</div>
+                            <div class="result-value" id="monthly-savings">R1,850</div>
+                            <div class="result-desc">Based on current tariffs</div>
+                        </div>
+                        
+                        <div class="result-box">
+                            <div class="result-label">Payback Period</div>
+                            <div class="result-value" id="payback-period">4.3 years</div>
+                            <div class="result-desc">Return on investment</div>
+                        </div>
+                        
+                        <div class="result-box">
+                            <div class="result-label">Lifetime Savings</div>
+                            <div class="result-value" id="lifetime-savings">R445,000</div>
+                            <div class="result-desc">Over 25 years</div>
+                        </div>
+                        
+                        <div class="result-box">
+                            <div class="result-label">CO₂ Emissions Saved</div>
+                            <div class="result-value" id="co2-saved">78 tons</div>
+                            <div class="result-desc">Environmental impact</div>
+                        </div>
+                    </div>
+                    
+                    <div class="chart-container">
+                        <canvas id="savings-chart"></canvas>
+                    </div>
+                </div>
+                
+                <div class="card" id="scenario-section">
+                    <h2 class="card-title">🔄 Scenario Comparison</h2>
+                    
+                    <div class="scenario-toggles">
+                        <div class="scenario-toggle active" data-scenario="grid">Grid Only</div>
+                        <div class="scenario-toggle" data-scenario="solar">Solar Only</div>
+                        <div class="scenario-toggle" data-scenario="solar-battery">Solar + Battery</div>
+                        <div class="scenario-toggle" data-scenario="hybrid">Hybrid System</div>
+                    </div>
+                    
+                    <div class="comparison-grid">
+                        <div class="comparison-card">
+                            <h3>Monthly Cost</h3>
+                            <div class="comparison-value" id="comparison-monthly">R2,500</div>
+                            <div class="comparison-desc">Average monthly bill</div>
+                        </div>
+                        
+                        <div class="comparison-card">
+                            <h3>Upfront Cost</h3>
+                            <div class="comparison-value" id="comparison-upfront">R0</div>
+                            <div class="comparison-desc">Installation & equipment</div>
+                        </div>
+                        
+                        <div class="comparison-card">
+                            <h3>25-Year Cost</h3>
+                            <div class="comparison-value" id="comparison-lifetime">R750,000</div>
+                            <div class="comparison-desc">Total cost over lifetime</div>
+                        </div>
+                    </div>
+                    
+                    <div class="chart-container">
+                        <canvas id="scenario-chart"></canvas>
+                    </div>
+                </div>
+                
+                <div class="card" id="visualization-section">
+                    <h2 class="card-title">📈 Energy Visualization</h2>
+                    
+                    <div class="chart-container">
+                        <canvas id="energy-chart"></canvas>
+                    </div>
+                    
+                    <div style="text-align: center; margin-top: 20px;">
+                        <h3>Battery Backup Simulation</h3>
+                        <p>See how long your battery would last during a power outage</p>
+                        
+                        <div style="max-width: 600px; margin: 20px auto; background: #f8f9ff; padding: 15px; border-radius: 10px;">
+                            <div style="display: flex; justify-content: space-between; margin-bottom: 10px;">
+                                <span>Battery Level</span>
+                                <span id="battery-level">100%</span>
+                            </div>
+                            <div style="height: 20px; background: #e2e8f0; border-radius: 10px; overflow: hidden;">
+                                <div id="battery-visual" style="height: 100%; width: 100%; background: #4facfe; transition: width 1s;"></div>
+                            </div>
+                        </div>
+                        
+                        <button id="simulate-btn" class="btn-primary">
+                            <i class="fas fa-bolt"></i> Simulate Power Outage
+                        </button>
+                    </div>
+                </div>
+                
+                <div class="card" id="cta-section">
+                    <h2 class="card-title">📋 Get Your Personalized Report</h2>
+                    <p style="text-align: center; margin-bottom: 30px;">Download your customized solar analysis or speak with our experts</p>
+                    
+                    <div class="cta-buttons">
+                        <button class="btn-primary">
+                            <i class="fas fa-download"></i> Download PDF Report
+                        </button>
+                        
+                        <button class="btn-outline">
+                            <i class="fas fa-envelope"></i> Email My Results
+                        </button>
+                        
+                        <button class="whatsapp-btn">
+                            <i class="fab fa-whatsapp"></i> Chat on WhatsApp
+                        </button>
+                    </div>
+                    
+                    <div style="max-width: 500px; margin: 30px auto; padding: 20px; background: #f8f9ff; border-radius: 10px;">
+                        <h3 style="text-align: center; margin-bottom: 15px;">Request a Detailed Assessment</h3>
+                        
+                        <div class="form-group">
+                            <input type="text" placeholder="Your Name">
+                        </div>
+                        
+                        <div class="form-group">
+                            <input type="email" placeholder="Your Email">
+                        </div>
+                        
+                        <div class="form-group">
+                            <input type="tel" placeholder="Your Phone Number">
+                        </div>
+                        
+                        <button class="btn-primary" style="width: 100%;">
+                            <i class="fas fa-calendar"></i> Schedule Consultation
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <div class="navigation">
+                <button class="btn btn-secondary" id="prev-btn" onclick="prevStep()">Previous</button>
+                <button class="btn btn-primary" id="next-btn" onclick="nextStep()">Next</button>
+            </div>
+        </div>
+    </div>
+    
+    <footer>
+        <p>© 2023 Aurok Energies Solar Calculator. This tool provides estimates only. Actual results may vary.</p>
+    </footer>
+
+    <script>
+        // Create floating particles
+        function createParticles() {
+            const particlesContainer = document.getElementById('particles');
+            for (let i = 0; i < 30; i++) {
+                const particle = document.createElement('div');
+                particle.classList.add('particle');
+                particle.style.left = `${Math.random() * 100}%`;
+                particle.style.animationDelay = `${Math.random() * 6}s`;
+                particle.style.width = `${Math.random() * 4 + 2}px`;
+                particle.style.height = particle.style.width;
+                particlesContainer.appendChild(particle);
+            }
+        }
+
+        // Step navigation
+        let currentStep = 1;
+        const totalSteps = 5;
+
+        function showStep(step) {
+            // Hide all steps
+            document.querySelectorAll('.step-content').forEach(el => {
+                el.classList.add('hidden');
+            });
+            
+            // Show current step
+            document.getElementById(`step${step}-content`).classList.remove('hidden');
+            
+            // Update step indicators
+            document.querySelectorAll('.step').forEach((el, index) => {
+                if (index + 1 < step) {
+                    el.classList.add('completed');
+                    el.classList.remove('active');
+                } else if (index + 1 === step) {
+                    el.classList.add('active');
+                    el.classList.remove('completed');
+                } else {
+                    el.classList.remove('active', 'completed');
+                }
+            });
+            
+            // Update navigation buttons
+            document.getElementById('prev-btn').style.display = step === 1 ? 'none' : 'block';
+            document.getElementById('next-btn').textContent = step === totalSteps ? 'Calculate' : 'Next';
+            
+            // If we're on the last step, calculate results
+            if (step === totalSteps) {
+                calculateResults();
+            }
+        }
+
+        function nextStep() {
+            if (currentStep < totalSteps) {
+                currentStep++;
+                showStep(currentStep);
+            } else {
+                calculateResults();
+            }
+        }
+
+        function prevStep() {
+            if (currentStep > 1) {
+                currentStep--;
+                showStep(currentStep);
+            }
+        }
+
+        // Toggle custom tariff input
+        function toggleTariffInput() {
+            const knowTariff = document.getElementById('knowTariff').value;
+            const customTariff = document.getElementById('customTariff');
+            
+            if (knowTariff === 'yes') {
+                customTariff.classList.remove('hidden');
+            } else {
+                customTariff.classList.add('hidden');
+            }
+        }
+
+        // Update usage indicator for appliances
+        function updateUsageIndicator(appliance) {
+            const count = document.getElementById(`${appliance}-count`).value;
+            const hours = document.getElementById(`${appliance}-hours`).value;
+            const card = document.querySelector(`[data-appliance="${appliance}"]`);
+            
+            if (count > 0 && hours > 0) {
+                card.classList.add('has-usage');
+            } else {
+                card.classList.remove('has-usage');
+            }
+        }
+
+        // Calculate results
+        function calculateResults() {
+            // Get tariff rate
+            let tariffRate = 2.91; // Default rate
+            if (document.getElementById('knowTariff').value === 'yes') {
+                tariffRate = parseFloat(document.getElementById('tariffRate').value) || 2.91;
+            }
+            
+            // Calculate total daily usage
+            let dailyUsage = 0;
+            
+            // Lighting
+            dailyUsage += calculateApplianceUsage('led', 9);
+            dailyUsage += calculateApplianceUsage('cfl', 20);
+            dailyUsage += calculateApplianceUsage('incandescent', 60);
+            dailyUsage += calculateApplianceUsage('outdoor', 50);
+            
+            // Kitchen
+            dailyUsage += calculateApplianceUsage('fridge', 150);
+            dailyUsage += calculateApplianceUsage('stove', 2500);
+            dailyUsage += calculateApplianceUsage('microwave', 1000);
+            dailyUsage += calculateApplianceUsage('dishwasher', 1800);
+            dailyUsage += calculateApplianceUsage('washer', 2000);
+            dailyUsage += calculateApplianceUsage('dryer', 3000);
+            
+            // Entertainment & Other
+            dailyUsage += calculateApplianceUsage('tv', 100);
+            dailyUsage += calculateApplianceUsage('computer', 300);
+            dailyUsage += calculateApplianceUsage('ac', 1500);
+            dailyUsage += calculateApplianceUsage('heater', 2000);
+            dailyUsage += calculateApplianceUsage('pool', 1500);
+            dailyUsage += calculateApplianceUsage('geyser', 3000);
+            
+            // Convert to kWh
+            const dailyKwh = dailyUsage / 1000;
+            const monthlyKwh = dailyKwh * 30;
+            const monthlyCost = monthlyKwh * tariffRate;
+            
+            // Display results
+            document.getElementById('daily-usage').textContent = `${dailyKwh.toFixed(2)} kWh`;
+            document.getElementById('monthly-usage').textContent = `${monthlyKwh.toFixed(2)} kWh`;
+            document.getElementById('monthly-cost').textContent = `R${monthlyCost.toFixed(2)}`;
+            document.getElementById('tariff-used').textContent = `R${tariffRate.toFixed(2)}/kWh`;
+            
+            // Calculate solar recommendations based on usage
+            calculateSolarRecommendations(dailyKwh, monthlyCost);
+            
+            // Show results
+            document.getElementById('results').classList.remove('hidden');
+        }
+
+        function calculateApplianceUsage(appliance, wattage) {
+            const count = parseFloat(document.getElementById(`${appliance}-count`).value) || 0;
+            const hours = parseFloat(document.getElementById(`${appliance}-hours`).value) || 0;
+            return count * wattage * hours;
+        }
+
+        function calculateSolarRecommendations(dailyKwh, monthlyCost) {
+            // Calculate system size (in kW) - assuming 4 hours of peak sun
+            const systemSize = Math.ceil(dailyKwh / 4);
+            
+            // Calculate number of panels (assuming 330W panels)
+            const panelCount = Math.ceil((systemSize * 1000) / 330);
+            
+            // Calculate inverter size (system size + 20% for efficiency losses)
+            const inverterSize = Math.ceil(systemSize * 1.2);
+            
+            // Calculate battery size (enough for 8 hours of average usage)
+            const batterySize = Math.ceil((dailyKwh / 24) * 8);
+            
+            // Calculate installation cost (R18,000 per kW)
+            const installationCost = systemSize * 18000 + batterySize * 5000;
+            
+            // Calculate monthly savings (80% of current bill)
+            const monthlySavings = monthlyCost * 0.8;
+            
+            // Calculate payback period (in years)
+            const paybackPeriod = installationCost / (monthlySavings * 12);
+            
+            // Calculate lifetime savings (over 25 years)
+            const lifetimeSavings = monthlySavings * 12 * 25;
+            
+            // Calculate CO2 saved (0.5 kg per kWh)
+            const co2Saved = dailyKwh * 0.5 * 365 * 25 / 1000;
+            
+            // Update the solar recommendations
+            document.getElementById('system-size').textContent = `${systemSize} kW`;
+            document.getElementById('panels-count').textContent = panelCount;
+            document.getElementById('inverter-size').textContent = `${inverterSize} kW`;
+            document.getElementById('battery-size').textContent = `${batterySize} kWh`;
+            document.getElementById('installation-cost').textContent = `R${installationCost.toLocaleString()}`;
+            document.getElementById('monthly-savings').textContent = `R${monthlySavings.toFixed(0)}`;
+            document.getElementById('payback-period').textContent = `${paybackPeriod.toFixed(1)} years`;
+            document.getElementById('lifetime-savings').textContent = `R${lifetimeSavings.toLocaleString()}`;
+            document.getElementById('co2-saved').textContent = `${co2Saved.toFixed(0)} tons`;
+            
+            // Update scenario comparison
+            document.getElementById('comparison-monthly').textContent = `R${monthlyCost.toFixed(0)}`;
+            document.getElementById('comparison-lifetime').textContent = `R${(monthlyCost * 12 * 25).toLocaleString()}`;
+        }
+
+        // Initialize the calculator
+        document.addEventListener('DOMContentLoaded', function() {
+            createParticles();
+            showStep(1);
+            
+            // Add event listeners for scenario toggles
+            document.querySelectorAll('.scenario-toggle').forEach(toggle => {
+                toggle.addEventListener('click', function() {
+                    document.querySelectorAll('.scenario-toggle').forEach(t => t.classList.remove('active'));
+                    this.classList.add('active');
+                });
+            });
+            
+            // Add event listener for battery simulation
+            document.getElementById('simulate-btn').addEventListener('click', function() {
+                const batteryVisual = document.getElementById('battery-visual');
+                const batteryLevel = document.getElementById('battery-level');
+                
+                // Animate battery drain
+                let level = 100;
+                const interval = setInterval(() => {
+                    level -= 1;
+                    batteryVisual.style.width = `${level}%`;
+                    batteryLevel.textContent = `${level}%`;
+                    
+                    if (level <= 0) {
+                        clearInterval(interval);
+                        
+                        // Reset after 2 seconds
+                        setTimeout(() => {
+                            batteryVisual.style.width = '100%';
+                            batteryLevel.textContent = '100%';
+                        }, 2000);
+                    }
+                }, 50);
+            });
+        });
+    </script>
+</body>
+</html>
