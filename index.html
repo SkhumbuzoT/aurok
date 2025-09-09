@@ -4,6 +4,8 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Aurok Energies Solar Calculator</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <style>
         * {
             margin: 0;
@@ -1009,7 +1011,7 @@
                                 <div class="appliance-icon">💻</div>
                                 <div class="appliance-info">
                                     <div class="appliance-name">Computer/Laptop</div>
-                                    <div class="appliance-power">300W each</div>
+                                    <div class="appliance-power">150W each</div>
                                 </div>
                             </div>
                             <div class="appliance-inputs">
@@ -1024,10 +1026,52 @@
                             </div>
                         </div>
 
+                        <div class="appliance-card" data-appliance="internet">
+                            <div class="usage-indicator"></div>
+                            <div class="appliance-header">
+                                <div class="appliance-icon">🌐</div>
+                                <div class="appliance-info">
+                                    <div class="appliance-name">Internet Router</div>
+                                    <div class="appliance-power">10W each</div>
+                                </div>
+                            </div>
+                            <div class="appliance-inputs">
+                                <div class="input-group">
+                                    <label>Count</label>
+                                    <input type="number" id="internet-count" placeholder="0" min="0" max="10" onchange="updateUsageIndicator('internet')">
+                                </div>
+                                <div class="input-group">
+                                    <label>Hours/day</label>
+                                    <input type="number" id="internet-hours" placeholder="24" min="0" max="24" value="24" onchange="updateUsageIndicator('internet')">
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="appliance-card" data-appliance="heater">
+                            <div class="usage-indicator"></div>
+                            <div class="appliance-header">
+                                <div class="appliance-icon">🌡️</div>
+                                <div class="appliance-info">
+                                    <div class="appliance-name">Electric Heater</div>
+                                    <div class="appliance-power">2000W each</div>
+                                </div>
+                            </div>
+                            <div class="appliance-inputs">
+                                <div class="input-group">
+                                    <label>Count</label>
+                                    <input type="number" id="heater-count" placeholder="0" min="0" max="10" onchange="updateUsageIndicator('heater')">
+                                </div>
+                                <div class="input-group">
+                                    <label>Hours/day</label>
+                                    <input type="number" id="heater-hours" placeholder="0" min="0" max="24" onchange="updateUsageIndicator('heater')">
+                                </div>
+                            </div>
+                        </div>
+
                         <div class="appliance-card" data-appliance="ac">
                             <div class="usage-indicator"></div>
                             <div class="appliance-header">
-                                <div class="appliance-icon">🌬️</div>
+                                <div class="appliance-icon">❄️</div>
                                 <div class="appliance-info">
                                     <div class="appliance-name">Air Conditioner</div>
                                     <div class="appliance-power">1500W each</div>
@@ -1045,34 +1089,13 @@
                             </div>
                         </div>
 
-                        <div class="appliance-card" data-appliance="heater">
-                            <div class="usage-indicator"></div>
-                            <div class="appliance-header">
-                                <div class="appliance-icon">🔥</div>
-                                <div class="appliance-info">
-                                    <div class="appliance-name">Space Heater</div>
-                                    <div class="appliance-power">2000W each</div>
-                                </div>
-                            </div>
-                            <div class="appliance-inputs">
-                                <div class="input-group">
-                                    <label>Count</label>
-                                    <input type="number" id="heater-count" placeholder="0" min="0" max="10" onchange="updateUsageIndicator('heater')">
-                                </div>
-                                <div class="input-group">
-                                    <label>Hours/day</label>
-                                    <input type="number" id="heater-hours" placeholder="0" min="0" max="24" onchange="updateUsageIndicator('heater')">
-                                </div>
-                            </div>
-                        </div>
-
                         <div class="appliance-card" data-appliance="pool">
                             <div class="usage-indicator"></div>
                             <div class="appliance-header">
                                 <div class="appliance-icon">🏊</div>
                                 <div class="appliance-info">
                                     <div class="appliance-name">Pool Pump</div>
-                                    <div class="appliance-power">1500W each</div>
+                                    <div class="appliance-power">1000W each</div>
                                 </div>
                             </div>
                             <div class="appliance-inputs">
@@ -1086,285 +1109,228 @@
                                 </div>
                             </div>
                         </div>
-
-                        <div class="appliance-card" data-appliance="geyser">
-                            <div class="usage-indicator"></div>
-                            <div class="appliance-header">
-                                <div class="appliance-icon">🚿</div>
-                                <div class="appliance-info">
-                                    <div class="appliance-name">Geyser</div>
-                                    <div class="appliance-power">3000W each</div>
-                                </div>
-                            </div>
-                            <div class="appliance-inputs">
-                                <div class="input-group">
-                                    <label>Count</label>
-                                    <input type="number" id="geyser-count" placeholder="0" min="0" max="5" onchange="updateUsageIndicator('geyser')">
-                                </div>
-                                <div class="input-group">
-                                    <label>Hours/day</label>
-                                    <input type="number" id="geyser-hours" placeholder="0" min="0" max="24" onchange="updateUsageIndicator('geyser')">
-                                </div>
-                            </div>
-                        </div>
                     </div>
                 </div>
             </div>
 
-            <!-- Step 5: Results & Solar Recommendations -->
+            <!-- Step 5: Results & Recommendations -->
             <div class="step-content hidden" id="step5-content">
-                <h2 class="step-title">☀️ Solar Recommendations</h2>
+                <h2 class="step-title">📊 Your Solar Recommendations</h2>
                 
-                <div class="card" id="results-section">
-                    <h2 class="card-title">⚡ Recommended Solar System</h2>
+                <div class="card">
+                    <h3 class="card-title">Your Energy Profile</h3>
                     
                     <div class="results-grid">
                         <div class="result-box">
-                            <div class="result-label">System Size</div>
-                            <div class="result-value" id="system-size">5 kW</div>
-                            <div class="result-desc">Ideal for your energy needs</div>
+                            <div class="result-label">Daily Energy Usage</div>
+                            <div class="result-value" id="daily-usage">0 kWh</div>
+                            <div class="result-desc">Based on your inputs</div>
                         </div>
                         
                         <div class="result-box">
-                            <div class="result-label">Solar Panels</div>
-                            <div class="result-value" id="panels-count">14</div>
-                            <div class="result-desc">330W panels</div>
+                            <div class="result-label">Monthly Cost</div>
+                            <div class="result-value" id="monthly-cost">R0</div>
+                            <div class="result-desc">At current tariff</div>
                         </div>
                         
                         <div class="result-box">
-                            <div class="result-label">Inverter Size</div>
-                            <div class="result-value" id="inverter-size">5 kW</div>
-                            <div class="result-desc">Hybrid inverter</div>
-                        </div>
-                        
-                        <div class="result-box">
-                            <div class="result-label">Battery Capacity</div>
-                            <div class="result-value" id="battery-size">10 kWh</div>
-                            <div class="result-desc">8 hours backup</div>
+                            <div class="result-label">Annual Cost</div>
+                            <div class="result-value" id="annual-cost">R0</div>
+                            <div class="result-desc">Potential savings</div>
                         </div>
                     </div>
-                    
-                    <div class="result-box" style="max-width: 400px; margin: 0 auto;">
-                        <div class="result-label">Estimated Installation Cost</div>
-                        <div class="result-value" id="installation-cost">R95,000</div>
-                        <div class="result-desc">Including panels, inverter, battery & installation</div>
-                    </div>
-                </div>
-                
-                <div class="card" id="savings-section">
-                    <h2 class="card-title">💰 Savings & Payback Period</h2>
-                    
-                    <div class="results-grid">
-                        <div class="result-box">
-                            <div class="result-label">Monthly Savings</div>
-                            <div class="result-value" id="monthly-savings">R1,850</div>
-                            <div class="result-desc">Based on current tariffs</div>
-                        </div>
-                        
-                        <div class="result-box">
-                            <div class="result-label">Payback Period</div>
-                            <div class="result-value" id="payback-period">4.3 years</div>
-                            <div class="result-desc">Return on investment</div>
-                        </div>
-                        
-                        <div class="result-box">
-                            <div class="result-label">Lifetime Savings</div>
-                            <div class="result-value" id="lifetime-savings">R445,000</div>
-                            <div class="result-desc">Over 25 years</div>
-                        </div>
-                        
-                        <div class="result-box">
-                            <div class="result-label">CO₂ Emissions Saved</div>
-                            <div class="result-value" id="co2-saved">78 tons</div>
-                            <div class="result-desc">Environmental impact</div>
-                        </div>
-                    </div>
-                    
-                    <div class="chart-container">
-                        <canvas id="savings-chart"></canvas>
-                    </div>
-                </div>
-                
-                <div class="card" id="scenario-section">
-                    <h2 class="card-title">🔄 Scenario Comparison</h2>
                     
                     <div class="scenario-toggles">
-                        <div class="scenario-toggle active" data-scenario="grid">Grid Only</div>
-                        <div class="scenario-toggle" data-scenario="solar">Solar Only</div>
-                        <div class="scenario-toggle" data-scenario="solar-battery">Solar + Battery</div>
-                        <div class="scenario-toggle" data-scenario="hybrid">Hybrid System</div>
+                        <div class="scenario-toggle active" onclick="changeScenario('basic')">Basic Solar</div>
+                        <div class="scenario-toggle" onclick="changeScenario('standard')">Standard Solar</div>
+                        <div class="scenario-toggle" onclick="changeScenario('premium')">Premium Solar</div>
+                    </div>
+                    
+                    <div class="chart-container" id="chart-container">
+                        <canvas id="solarChart"></canvas>
                     </div>
                     
                     <div class="comparison-grid">
                         <div class="comparison-card">
-                            <h3>Monthly Cost</h3>
-                            <div class="comparison-value" id="comparison-monthly">R2,500</div>
-                            <div class="comparison-desc">Average monthly bill</div>
+                            <h3>System Size</h3>
+                            <div class="comparison-value" id="system-size">5 kW</div>
+                            <div class="comparison-desc">Recommended capacity</div>
                         </div>
                         
                         <div class="comparison-card">
-                            <h3>Upfront Cost</h3>
-                            <div class="comparison-value" id="comparison-upfront">R0</div>
-                            <div class="comparison-desc">Installation & equipment</div>
+                            <h3>Battery Storage</h3>
+                            <div class="comparison-value" id="battery-size">10 kWh</div>
+                            <div class="comparison-desc">For night-time usage</div>
                         </div>
                         
                         <div class="comparison-card">
-                            <h3>25-Year Cost</h3>
-                            <div class="comparison-value" id="comparison-lifetime">R750,000</div>
-                            <div class="comparison-desc">Total cost over lifetime</div>
-                        </div>
-                    </div>
-                    
-                    <div class="chart-container">
-                        <canvas id="scenario-chart"></canvas>
-                    </div>
-                </div>
-                
-                <div class="card" id="visualization-section">
-                    <h2 class="card-title">📈 Energy Visualization</h2>
-                    
-                    <div class="chart-container">
-                        <canvas id="energy-chart"></canvas>
-                    </div>
-                    
-                    <div style="text-align: center; margin-top: 20px;">
-                        <h3>Battery Backup Simulation</h3>
-                        <p>See how long your battery would last during a power outage</p>
-                        
-                        <div style="max-width: 600px; margin: 20px auto; background: #f8f9ff; padding: 15px; border-radius: 10px;">
-                            <div style="display: flex; justify-content: space-between; margin-bottom: 10px;">
-                                <span>Battery Level</span>
-                                <span id="battery-level">100%</span>
-                            </div>
-                            <div style="height: 20px; background: #e2e8f0; border-radius: 10px; overflow: hidden;">
-                                <div id="battery-visual" style="height: 100%; width: 100%; background: #4facfe; transition: width 1s;"></div>
-                            </div>
+                            <h3>Estimated Cost</h3>
+                            <div class="comparison-value" id="system-cost">R150,000</div>
+                            <div class="comparison-desc">Including installation</div>
                         </div>
                         
-                        <button id="simulate-btn" class="btn-primary">
-                            <i class="fas fa-bolt"></i> Simulate Power Outage
-                        </button>
+                        <div class="comparison-card">
+                            <h3>Payback Period</h3>
+                            <div class="comparison-value" id="payback">5-7 years</div>
+                            <div class="comparison-desc">Return on investment</div>
+                        </div>
                     </div>
-                </div>
-                
-                <div class="card" id="cta-section">
-                    <h2 class="card-title">📋 Get Your Personalized Report</h2>
-                    <p style="text-align: center; margin-bottom: 30px;">Download your customized solar analysis or speak with our experts</p>
                     
                     <div class="cta-buttons">
-                        <button class="btn-primary">
-                            <i class="fas fa-download"></i> Download PDF Report
-                        </button>
-                        
-                        <button class="btn-outline">
-                            <i class="fas fa-envelope"></i> Email My Results
-                        </button>
-                        
-                        <button class="whatsapp-btn">
-                            <i class="fab fa-whatsapp"></i> Chat on WhatsApp
-                        </button>
-                    </div>
-                    
-                    <div style="max-width: 500px; margin: 30px auto; padding: 20px; background: #f8f9ff; border-radius: 10px;">
-                        <h3 style="text-align: center; margin-bottom: 15px;">Request a Detailed Assessment</h3>
-                        
-                        <div class="form-group">
-                            <input type="text" placeholder="Your Name">
-                        </div>
-                        
-                        <div class="form-group">
-                            <input type="email" placeholder="Your Email">
-                        </div>
-                        
-                        <div class="form-group">
-                            <input type="tel" placeholder="Your Phone Number">
-                        </div>
-                        
-                        <button class="btn-primary" style="width: 100%;">
-                            <i class="fas fa-calendar"></i> Schedule Consultation
-                        </button>
+                        <button class="btn-outline">Download Full Report</button>
+                        <button class="whatsapp-btn"><i class="fab fa-whatsapp"></i> Contact via WhatsApp</button>
                     </div>
                 </div>
             </div>
 
             <div class="navigation">
-                <button class="btn btn-secondary" id="prev-btn" onclick="prevStep()">Previous</button>
-                <button class="btn btn-primary" id="next-btn" onclick="nextStep()">Next</button>
+                <button class="btn btn-secondary" id="prevBtn" onclick="prevStep()">Previous</button>
+                <button class="btn btn-primary" id="nextBtn" onclick="nextStep()">Next</button>
             </div>
         </div>
     </div>
-    
+
     <footer>
-        <p>© 2023 Aurok Energies Solar Calculator. This tool provides estimates only. Actual results may vary.</p>
+        <p>© 2023 Aurok Energies | Smart Solar Solutions</p>
     </footer>
 
     <script>
         // Create floating particles
         function createParticles() {
-            const particlesContainer = document.getElementById('particles');
-            for (let i = 0; i < 30; i++) {
+            const container = document.getElementById('particles');
+            const particleCount = 30;
+            
+            for (let i = 0; i < particleCount; i++) {
                 const particle = document.createElement('div');
                 particle.classList.add('particle');
-                particle.style.left = `${Math.random() * 100}%`;
-                particle.style.animationDelay = `${Math.random() * 6}s`;
-                particle.style.width = `${Math.random() * 4 + 2}px`;
-                particle.style.height = particle.style.width;
-                particlesContainer.appendChild(particle);
+                
+                // Random properties
+                const size = Math.random() * 4 + 2;
+                const left = Math.random() * 100;
+                const animationDuration = Math.random() * 10 + 5;
+                const animationDelay = Math.random() * 5;
+                
+                particle.style.width = `${size}px`;
+                particle.style.height = `${size}px`;
+                particle.style.left = `${left}%`;
+                particle.style.animationDuration = `${animationDuration}s`;
+                particle.style.animationDelay = `${animationDelay}s`;
+                
+                container.appendChild(particle);
             }
         }
-
-        // Step navigation
+        
+        // Initialize the calculator
         let currentStep = 1;
         const totalSteps = 5;
-
-        function showStep(step) {
-            // Hide all steps
-            document.querySelectorAll('.step-content').forEach(el => {
-                el.classList.add('hidden');
-            });
-            
-            // Show current step
-            document.getElementById(`step${step}-content`).classList.remove('hidden');
-            
-            // Update step indicators
-            document.querySelectorAll('.step').forEach((el, index) => {
-                if (index + 1 < step) {
-                    el.classList.add('completed');
-                    el.classList.remove('active');
-                } else if (index + 1 === step) {
-                    el.classList.add('active');
-                    el.classList.remove('completed');
+        let solarChart = null;
+        let currentScenario = 'basic';
+        
+        // Appliance power ratings (in watts)
+        const appliancePower = {
+            'led': 9,
+            'cfl': 20,
+            'incandescent': 60,
+            'outdoor': 50,
+            'fridge': 150,
+            'stove': 2500,
+            'microwave': 1000,
+            'dishwasher': 1800,
+            'washer': 2000,
+            'dryer': 3000,
+            'tv': 100,
+            'computer': 150,
+            'internet': 10,
+            'heater': 2000,
+            'ac': 1500,
+            'pool': 1000
+        };
+        
+        // Initialize the calculator
+        function initCalculator() {
+            createParticles();
+            updateStepIndicator();
+            updateNavigationButtons();
+        }
+        
+        // Update step indicator
+        function updateStepIndicator() {
+            for (let i = 1; i <= totalSteps; i++) {
+                const step = document.getElementById(`step${i}`);
+                if (i < currentStep) {
+                    step.classList.add('completed');
+                    step.classList.remove('active');
+                } else if (i === currentStep) {
+                    step.classList.add('active');
+                    step.classList.remove('completed');
                 } else {
-                    el.classList.remove('active', 'completed');
+                    step.classList.remove('active', 'completed');
                 }
-            });
-            
-            // Update navigation buttons
-            document.getElementById('prev-btn').style.display = step === 1 ? 'none' : 'block';
-            document.getElementById('next-btn').textContent = step === totalSteps ? 'Calculate' : 'Next';
-            
-            // If we're on the last step, calculate results
-            if (step === totalSteps) {
-                calculateResults();
             }
         }
-
+        
+        // Update navigation buttons
+        function updateNavigationButtons() {
+            const prevBtn = document.getElementById('prevBtn');
+            const nextBtn = document.getElementById('nextBtn');
+            
+            // Hide previous button on first step
+            if (currentStep === 1) {
+                prevBtn.style.visibility = 'hidden';
+            } else {
+                prevBtn.style.visibility = 'visible';
+            }
+            
+            // Change next button text on last step
+            if (currentStep === totalSteps) {
+                nextBtn.textContent = 'Finish';
+            } else {
+                nextBtn.textContent = 'Next';
+            }
+        }
+        
+        // Show current step content
+        function showStep(stepNumber) {
+            // Hide all step contents
+            document.querySelectorAll('.step-content').forEach(content => {
+                content.classList.add('hidden');
+            });
+            
+            // Show current step content
+            document.getElementById(`step${stepNumber}-content`).classList.remove('hidden');
+            
+            // If it's the results step, calculate and display results
+            if (stepNumber === 5) {
+                calculateResults();
+                setTimeout(() => {
+                    document.getElementById('chart-container').classList.add('visible');
+                }, 300);
+            }
+        }
+        
+        // Go to next step
         function nextStep() {
             if (currentStep < totalSteps) {
                 currentStep++;
+                updateStepIndicator();
                 showStep(currentStep);
+                updateNavigationButtons();
             } else {
-                calculateResults();
+                // Finish the calculator
+                alert('Thank you for using Aurok Energies Solar Calculator!');
             }
         }
-
+        
+        // Go to previous step
         function prevStep() {
             if (currentStep > 1) {
                 currentStep--;
+                updateStepIndicator();
                 showStep(currentStep);
+                updateNavigationButtons();
             }
         }
-
+        
         // Toggle custom tariff input
         function toggleTariffInput() {
             const knowTariff = document.getElementById('knowTariff').value;
@@ -1376,12 +1342,12 @@
                 customTariff.classList.add('hidden');
             }
         }
-
-        // Update usage indicator for appliances
+        
+        // Update usage indicator
         function updateUsageIndicator(appliance) {
-            const count = document.getElementById(`${appliance}-count`).value;
-            const hours = document.getElementById(`${appliance}-hours`).value;
-            const card = document.querySelector(`[data-appliance="${appliance}"]`);
+            const count = parseInt(document.getElementById(`${appliance}-count`).value) || 0;
+            const hours = parseInt(document.getElementById(`${appliance}-hours`).value) || 0;
+            const card = document.querySelector(`.appliance-card[data-appliance="${appliance}"]`);
             
             if (count > 0 && hours > 0) {
                 card.classList.add('has-usage');
@@ -1389,145 +1355,166 @@
                 card.classList.remove('has-usage');
             }
         }
-
-        // Calculate results
-        function calculateResults() {
-            // Get tariff rate
-            let tariffRate = 2.91; // Default rate
-            if (document.getElementById('knowTariff').value === 'yes') {
-                tariffRate = parseFloat(document.getElementById('tariffRate').value) || 2.91;
+        
+        // Calculate total energy consumption
+        function calculateEnergyConsumption() {
+            let totalDailyEnergy = 0;
+            
+            // Calculate for each appliance
+            for (const appliance in appliancePower) {
+                const count = parseInt(document.getElementById(`${appliance}-count`).value) || 0;
+                const hours = parseInt(document.getElementById(`${appliance}-hours`).value) || 0;
+                
+                totalDailyEnergy += (appliancePower[appliance] * count * hours) / 1000; // Convert to kWh
             }
             
-            // Calculate total daily usage
-            let dailyUsage = 0;
-            
-            // Lighting
-            dailyUsage += calculateApplianceUsage('led', 9);
-            dailyUsage += calculateApplianceUsage('cfl', 20);
-            dailyUsage += calculateApplianceUsage('incandescent', 60);
-            dailyUsage += calculateApplianceUsage('outdoor', 50);
-            
-            // Kitchen
-            dailyUsage += calculateApplianceUsage('fridge', 150);
-            dailyUsage += calculateApplianceUsage('stove', 2500);
-            dailyUsage += calculateApplianceUsage('microwave', 1000);
-            dailyUsage += calculateApplianceUsage('dishwasher', 1800);
-            dailyUsage += calculateApplianceUsage('washer', 2000);
-            dailyUsage += calculateApplianceUsage('dryer', 3000);
-            
-            // Entertainment & Other
-            dailyUsage += calculateApplianceUsage('tv', 100);
-            dailyUsage += calculateApplianceUsage('computer', 300);
-            dailyUsage += calculateApplianceUsage('ac', 1500);
-            dailyUsage += calculateApplianceUsage('heater', 2000);
-            dailyUsage += calculateApplianceUsage('pool', 1500);
-            dailyUsage += calculateApplianceUsage('geyser', 3000);
-            
-            // Convert to kWh
-            const dailyKwh = dailyUsage / 1000;
-            const monthlyKwh = dailyKwh * 30;
-            const monthlyCost = monthlyKwh * tariffRate;
-            
-            // Display results
-            document.getElementById('daily-usage').textContent = `${dailyKwh.toFixed(2)} kWh`;
-            document.getElementById('monthly-usage').textContent = `${monthlyKwh.toFixed(2)} kWh`;
-            document.getElementById('monthly-cost').textContent = `R${monthlyCost.toFixed(2)}`;
-            document.getElementById('tariff-used').textContent = `R${tariffRate.toFixed(2)}/kWh`;
-            
-            // Calculate solar recommendations based on usage
-            calculateSolarRecommendations(dailyKwh, monthlyCost);
-            
-            // Show results
-            document.getElementById('results').classList.remove('hidden');
+            return totalDailyEnergy;
         }
-
-        function calculateApplianceUsage(appliance, wattage) {
-            const count = parseFloat(document.getElementById(`${appliance}-count`).value) || 0;
-            const hours = parseFloat(document.getElementById(`${appliance}-hours`).value) || 0;
-            return count * wattage * hours;
+        
+        // Get tariff rate
+        function getTariffRate() {
+            const knowTariff = document.getElementById('knowTariff').value;
+            
+            if (knowTariff === 'yes') {
+                return parseFloat(document.getElementById('tariffRate').value) || 2.91;
+            }
+            
+            return 2.91; // Default tariff
         }
-
-        function calculateSolarRecommendations(dailyKwh, monthlyCost) {
-            // Calculate system size (in kW) - assuming 4 hours of peak sun
-            const systemSize = Math.ceil(dailyKwh / 4);
+        
+        // Calculate results
+        function calculateResults() {
+            const dailyUsage = calculateEnergyConsumption();
+            const tariff = getTariffRate();
             
-            // Calculate number of panels (assuming 330W panels)
-            const panelCount = Math.ceil((systemSize * 1000) / 330);
+            // Calculate costs
+            const monthlyCost = dailyUsage * 30 * tariff;
+            const annualCost = monthlyCost * 12;
             
-            // Calculate inverter size (system size + 20% for efficiency losses)
-            const inverterSize = Math.ceil(systemSize * 1.2);
+            // Update result values
+            document.getElementById('daily-usage').textContent = dailyUsage.toFixed(2) + ' kWh';
+            document.getElementById('monthly-cost').textContent = 'R' + monthlyCost.toFixed(2);
+            document.getElementById('annual-cost').textContent = 'R' + annualCost.toFixed(2);
             
-            // Calculate battery size (enough for 8 hours of average usage)
-            const batterySize = Math.ceil((dailyKwh / 24) * 8);
+            // Update solar recommendations based on usage
+            updateSolarRecommendations(dailyUsage);
             
-            // Calculate installation cost (R18,000 per kW)
-            const installationCost = systemSize * 18000 + batterySize * 5000;
-            
-            // Calculate monthly savings (80% of current bill)
-            const monthlySavings = monthlyCost * 0.8;
-            
-            // Calculate payback period (in years)
-            const paybackPeriod = installationCost / (monthlySavings * 12);
-            
-            // Calculate lifetime savings (over 25 years)
-            const lifetimeSavings = monthlySavings * 12 * 25;
-            
-            // Calculate CO2 saved (0.5 kg per kWh)
-            const co2Saved = dailyKwh * 0.5 * 365 * 25 / 1000;
-            
-            // Update the solar recommendations
-            document.getElementById('system-size').textContent = `${systemSize} kW`;
-            document.getElementById('panels-count').textContent = panelCount;
-            document.getElementById('inverter-size').textContent = `${inverterSize} kW`;
-            document.getElementById('battery-size').textContent = `${batterySize} kWh`;
-            document.getElementById('installation-cost').textContent = `R${installationCost.toLocaleString()}`;
-            document.getElementById('monthly-savings').textContent = `R${monthlySavings.toFixed(0)}`;
-            document.getElementById('payback-period').textContent = `${paybackPeriod.toFixed(1)} years`;
-            document.getElementById('lifetime-savings').textContent = `R${lifetimeSavings.toLocaleString()}`;
-            document.getElementById('co2-saved').textContent = `${co2Saved.toFixed(0)} tons`;
-            
-            // Update scenario comparison
-            document.getElementById('comparison-monthly').textContent = `R${monthlyCost.toFixed(0)}`;
-            document.getElementById('comparison-lifetime').textContent = `R${(monthlyCost * 12 * 25).toLocaleString()}`;
+            // Create or update chart
+            createSolarChart(dailyUsage, tariff);
         }
-
-        // Initialize the calculator
-        document.addEventListener('DOMContentLoaded', function() {
-            createParticles();
-            showStep(1);
+        
+        // Update solar recommendations based on daily usage
+        function updateSolarRecommendations(dailyUsage) {
+            let systemSize, batterySize, systemCost, payback;
             
-            // Add event listeners for scenario toggles
+            if (currentScenario === 'basic') {
+                systemSize = Math.max(3, Math.ceil(dailyUsage / 5));
+                batterySize = Math.max(5, Math.ceil(dailyUsage / 2));
+                systemCost = systemSize * 25000;
+                payback = Math.ceil(systemCost / (dailyUsage * 365 * getTariffRate() / 1000));
+            } else if (currentScenario === 'standard') {
+                systemSize = Math.max(5, Math.ceil(dailyUsage / 4));
+                batterySize = Math.max(7.5, Math.ceil(dailyUsage / 1.8));
+                systemCost = systemSize * 30000;
+                payback = Math.ceil(systemCost / (dailyUsage * 365 * getTariffRate() / 1000));
+            } else { // premium
+                systemSize = Math.max(8, Math.ceil(dailyUsage / 3));
+                batterySize = Math.max(10, Math.ceil(dailyUsage / 1.5));
+                systemCost = systemSize * 35000;
+                payback = Math.ceil(systemCost / (dailyUsage * 365 * getTariffRate() / 1000));
+            }
+            
+            // Update recommendation values
+            document.getElementById('system-size').textContent = systemSize + ' kW';
+            document.getElementById('battery-size').textContent = batterySize + ' kWh';
+            document.getElementById('system-cost').textContent = 'R' + systemCost.toLocaleString();
+            document.getElementById('payback').textContent = payback + ' years';
+        }
+        
+        // Change scenario
+        function changeScenario(scenario) {
+            currentScenario = scenario;
+            
+            // Update active toggle
             document.querySelectorAll('.scenario-toggle').forEach(toggle => {
-                toggle.addEventListener('click', function() {
-                    document.querySelectorAll('.scenario-toggle').forEach(t => t.classList.remove('active'));
-                    this.classList.add('active');
-                });
+                toggle.classList.remove('active');
             });
+            event.target.classList.add('active');
             
-            // Add event listener for battery simulation
-            document.getElementById('simulate-btn').addEventListener('click', function() {
-                const batteryVisual = document.getElementById('battery-visual');
-                const batteryLevel = document.getElementById('battery-level');
-                
-                // Animate battery drain
-                let level = 100;
-                const interval = setInterval(() => {
-                    level -= 1;
-                    batteryVisual.style.width = `${level}%`;
-                    batteryLevel.textContent = `${level}%`;
-                    
-                    if (level <= 0) {
-                        clearInterval(interval);
-                        
-                        // Reset after 2 seconds
-                        setTimeout(() => {
-                            batteryVisual.style.width = '100%';
-                            batteryLevel.textContent = '100%';
-                        }, 2000);
+            // Update recommendations
+            const dailyUsage = calculateEnergyConsumption();
+            updateSolarRecommendations(dailyUsage);
+            
+            // Update chart
+            createSolarChart(dailyUsage, getTariffRate());
+        }
+        
+        // Create solar chart
+        function createSolarChart(dailyUsage, tariff) {
+            const ctx = document.getElementById('solarChart').getContext('2d');
+            
+            // Destroy previous chart if it exists
+            if (solarChart) {
+                solarChart.destroy();
+            }
+            
+            // Calculate values for chart
+            const monthlyCost = dailyUsage * 30 * tariff;
+            const solarSavings = monthlyCost * 0.7; // Assuming 70% savings with solar
+            const remainingCost = monthlyCost - solarSavings;
+            
+            // Create new chart
+            solarChart = new Chart(ctx, {
+                type: 'bar',
+                data: {
+                    labels: ['Current Cost', 'With Solar', 'Savings'],
+                    datasets: [{
+                        label: 'Monthly Electricity Cost (R)',
+                        data: [monthlyCost, remainingCost, solarSavings],
+                        backgroundColor: [
+                            'rgba(255, 99, 132, 0.7)',
+                            'rgba(54, 162, 235, 0.7)',
+                            'rgba(75, 192, 192, 0.7)'
+                        ],
+                        borderColor: [
+                            'rgb(255, 99, 132)',
+                            'rgb(54, 162, 235)',
+                            'rgb(75, 192, 192)'
+                        ],
+                        borderWidth: 1
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            title: {
+                                display: true,
+                                text: 'Cost (R)'
+                            }
+                        }
+                    },
+                    plugins: {
+                        title: {
+                            display: true,
+                            text: 'Monthly Savings with Solar'
+                        },
+                        tooltip: {
+                            callbacks: {
+                                label: function(context) {
+                                    return `R${context.raw.toFixed(2)}`;
+                                }
+                            }
+                        }
                     }
-                }, 50);
+                }
             });
-        });
+        }
+        
+        // Initialize the calculator when the page loads
+        window.onload = initCalculator;
     </script>
 </body>
 </html>
